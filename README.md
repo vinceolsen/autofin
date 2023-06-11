@@ -1,2 +1,2 @@
-# autofin
-autofin
+# algofin
+algofin
