@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "algofin"
+version = "0.1.0"
+description = "Back testing of algorithmic trading strategies"
+authors = ["Vince Olsen <vinceolsen@github.com>"]
+readme = "README.md"
+packages = [{include = "algofin"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+recordtype = "^1.4"
+datetime = "^5.2"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

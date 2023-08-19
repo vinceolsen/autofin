@@ -52,7 +52,7 @@ class TradingStrategies:
 
     @staticmethod
     def load_csv(name):
-        fullpath = '../data/' + name + '.csv'
+        fullpath = 'algofin/data/' + name + '.csv'
         print('reading csv:', fullpath)
 
         with open(fullpath, newline='') as f:
@@ -68,7 +68,7 @@ class TradingStrategies:
             os.makedirs(path)
 
     def write_to_csv(self, name: str, rows: list):
-        path = '../results/' + self.now
+        path = 'algofin/results/' + self.now
         self.create_folder_(path)
         fullpath = path + '/' + name + '.csv'
         print('writing rows to csv:', fullpath)
