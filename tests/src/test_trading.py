@@ -1,4 +1,4 @@
-from ...algofin.src.trading import BackTest, Price
+from ...algofin.src.trading import BackTest
 
 
 def test_true():
@@ -8,8 +8,3 @@ def test_true():
 def test_it_runs_everything():
     BackTest()
     assert True
-
-
-
-
-

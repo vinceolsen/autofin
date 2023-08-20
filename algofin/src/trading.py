@@ -1,8 +1,5 @@
-import csv
 from collections import namedtuple
 from recordtype import recordtype
-
-import os
 from datetime import date
 from .strategies import Strategy, Strategies, LIMIT, MARKET
 from .dao import Dao, Price
@@ -37,6 +34,16 @@ class BackTest:
         for strategy in self.strategies:
             self.implement_(strategy)
 
+    def get_starting_trading_day(self, prices, start_date):
+        strategy_is_live = False
+        trading_day = 0
+        for day in prices:
+            if self._greater_than_or_equal(day.date, start_date):
+                strategy_is_live = True
+                break
+            trading_day += 1
+        return strategy_is_live, trading_day
+
     def implement_(self, strategy: Strategy):
         starting_balance = Balance(strategy_id=strategy.strategy_id, date=strategy.start_date,
                                    cash_balance=self.starting_balance,
@@ -47,13 +54,7 @@ class BackTest:
 
         prices = self.pricing_data[strategy.symbol]
 
-        trading_day = 0
-        strategy_is_live = False
-        for day in prices:
-            if self._greater_than_or_equal(day.date, strategy.start_date):
-                strategy_is_live = True
-                break
-            trading_day += 1
+        strategy_is_live, trading_day = self.get_starting_trading_day(prices, strategy.start_date)
 
         while strategy_is_live:
             price = prices[trading_day]
