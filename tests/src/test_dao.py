@@ -7,7 +7,7 @@ def test_it_gets_all_symbols():
 
 
 def test_it_loads_a_pricing_file():
-    prices = Dao().load_csv('RITM')
+    prices = Dao().get_prices('RITM')
     assert len(prices) == 2544
     assert len(prices[0]) == 6
     assert prices[0] == Price(symbol='RITM', date='2013-05-02', open=14.0, high=14.0, low=13.0, close=13.52)

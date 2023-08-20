@@ -1,23 +1,12 @@
-from collections import namedtuple
-from recordtype import recordtype
 from datetime import date
 from .strategies import Strategy, Strategies, LIMIT, MARKET
-from .dao import Dao, Price
+from .dao import Dao
+from .objects import Balance, Order, Price, Trade
 
 
 # specify constants
 BUY = 'buy'
 SELL = 'sell'
-
-
-# specify objects
-Order = recordtype('Order',
-                   ['order_id', 'strategy_id', 'symbol', 'number_of_shares', 'buy_sell', 'trade_type',
-                    'open_date', 'close_date', 'price', 'total', 'active'])
-Trade = namedtuple('Trade', ['trade_id', 'order_id', 'number_of_shares', 'date', 'price', 'total'])
-Balance = namedtuple('Balance',
-                     ['strategy_id', 'date', 'order_balance', 'cash_balance', 'invested_balance', 'number_of_shares'])
-
 
 class BackTest:
     def __init__(self):
@@ -33,6 +22,13 @@ class BackTest:
     def implement_all_strategies(self):
         for strategy in self.strategies:
             self.implement_(strategy)
+
+    def get_best_strategy(self):
+        ending_balances = []
+        max_balance_of_each_strategy = []
+        balances = self.dao.get_balances()
+        # max_ending_balance = ending_balances.sort()
+
 
     def get_starting_trading_day(self, prices, start_date):
         strategy_is_live = False

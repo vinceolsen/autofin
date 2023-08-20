@@ -1,11 +1,7 @@
 import os
 import csv
-from collections import namedtuple
 import time
-
-
-# specify objects
-Price = namedtuple('Price', ['symbol', 'date', 'open', 'high', 'low', 'close'])
+from .objects import Price, Balance
 
 
 class Dao:
@@ -25,20 +21,19 @@ class Dao:
     def load_all_pricing_data(self) -> dict:
         pricing_data = dict()
         for symbol in self.get_all_symbols():
-            pricing_data[symbol] = self.load_csv(symbol)
+            pricing_data[symbol] = self.get_prices(symbol)
         return pricing_data
 
-    @staticmethod
-    def load_csv(name):
-        fullpath = 'algofin/pricing_data/' + name + '.csv'
-        print('reading csv:', fullpath)
-
-        with open(fullpath, newline='') as f:
-            reader = csv.reader(f)
-            next(reader)  # discarded, used to skip the first row to cast to floats on the following rows
-            data = [Price(row[0], row[1], float(row[2]), float(row[3]), float(row[4]), float(row[5])) for row in reader]
-            print(data[:10])
-        return data
+    # @staticmethod
+    # def load_csv(path):
+    #     print('reading csv:', path)
+    #
+    #     with open(path, newline='') as f:
+    #         reader = csv.reader(f)
+    #         next(reader)  # discarded, used to skip the first row to cast to floats on the following rows
+    #         data = [Price(row[0], row[1], float(row[2]), float(row[3]), float(row[4]), float(row[5])) for row in reader]
+    #         print(data[:10])
+    #     return data
 
     @staticmethod
     def create_folder_(path):
@@ -53,3 +48,31 @@ class Dao:
         with open(fullpath, 'a', newline='') as f:
             writer = csv.writer(f)
             writer.writerows(rows)
+
+    @staticmethod
+    def load_balance(row):
+        return Balance(row[0], row[1], float(row[2]), float(row[3]), float(row[4]), row[5])
+
+    @staticmethod
+    def load_price(row):
+        return Price(row[0], row[1], float(row[2]), float(row[3]), float(row[4]), float(row[5]))
+
+    @staticmethod
+    def read_csv(path, load_object, skip_headers=False):
+        print('reading csv:', path)
+
+        with open(path, newline='') as f:
+            reader = csv.reader(f)
+            if skip_headers:
+                next(reader)  # discarded, used to skip the first row of headers to cast to floats on the following rows
+            data = [load_object(row) for row in reader]
+            print(data[:10])
+        return data
+
+    def get_prices(self, name):
+        path = 'algofin/pricing_data/' + name + '.csv'
+        return self.read_csv(path, self.load_price, True)
+
+    def get_balances(self):
+        path = 'algofin/results/' + self.now + '/balances.csv'
+        return self.read_csv(path, self.load_balance, False)
