@@ -1,4 +1,4 @@
-from ...algofin.src.trading_strategies import BackTest, Price
+from ...algofin.src.trading import BackTest, Price
 
 
 def test_true():
