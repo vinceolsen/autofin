@@ -6,13 +6,14 @@ def test_true():
 
 
 def test_it_runs_everything():
-    trading_strategies = BackTest()
+    BackTest()
     assert True
 
 
 def test_it_gets_all_symbols():
     symbols = BackTest().symbols
     assert symbols == {'QQQ', 'RITM'}
+
 
 def test_it_loads_all_pricing_data():
     pricing_data = BackTest().pricing_data

@@ -22,7 +22,7 @@ test:
 
 lint:
 	echo "running linting"
-	poetry run flake8 algofin/src
+	poetry run flake8 algofin/src tests
 
 clean_install: clean install
 
