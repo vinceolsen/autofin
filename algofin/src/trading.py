@@ -1,10 +1,11 @@
 import csv
 from collections import namedtuple
 from recordtype import recordtype
-import time
+
 import os
 from datetime import date
 from .strategies import Strategy, Strategies, LIMIT, MARKET
+from .dao import Dao, Price
 
 
 # specify constants
@@ -13,7 +14,6 @@ SELL = 'sell'
 
 
 # specify objects
-Price = namedtuple('Price', ['symbol', 'date', 'open', 'high', 'low', 'close'])
 Order = recordtype('Order',
                    ['order_id', 'strategy_id', 'symbol', 'number_of_shares', 'buy_sell', 'trade_type',
                     'open_date', 'close_date', 'price', 'total', 'active'])
@@ -24,60 +24,18 @@ Balance = namedtuple('Balance',
 
 class BackTest:
     def __init__(self):
-        self.now = str(int(time.time()))
-        print('now:', self.now)
-        self.symbols = self.get_all_symbols()
-        self.pricing_data = self.load_all_pricing_data()
+        self.dao = Dao()
+        self.symbols = self.dao.get_all_symbols()
+        self.pricing_data = self.dao.load_all_pricing_data()
         self.starting_balance = 10000.0
         self.strategies = Strategies.get_strategies()
-        self.write_to_csv('strategy', self.strategies)
+        self.dao.write_to_csv('strategy', self.strategies)
         self.order_id_offset = 0
-        self.trade_id_offest = 0
-
-    def get_all_symbols(self) -> set:
-        symbols = set()
-        for file in os.listdir('algofin/pricing_data'):
-            if file.endswith(".csv"):
-                symbols.add(file[0:-4])
-        print('symbols:', symbols)
-        return symbols
-
-    def load_all_pricing_data(self) -> dict:
-        pricing_data = dict()
-        for symbol in self.symbols:
-            pricing_data[symbol] = self.load_csv(symbol)
-        return pricing_data
+        self.trade_id_offset = 0
 
     def implement_all_strategies(self):
         for strategy in self.strategies:
             self.implement_(strategy)
-
-    @staticmethod
-    def load_csv(name):
-        fullpath = 'algofin/pricing_data/' + name + '.csv'
-        print('reading csv:', fullpath)
-
-        with open(fullpath, newline='') as f:
-            reader = csv.reader(f)
-            next(reader)  # discarded, used to skip the first row to cast to floats on the following rows
-            data = [Price(row[0], row[1], float(row[2]), float(row[3]), float(row[4]), float(row[5])) for row in reader]
-            print(data[:10])
-        return data
-
-    @staticmethod
-    def create_folder_(path):
-        if not os.path.exists(path):
-            os.makedirs(path)
-
-    def write_to_csv(self, name: str, rows: list):
-        path = 'algofin/results/' + self.now
-        self.create_folder_(path)
-        fullpath = path + '/' + name + '.csv'
-        print('writing rows to csv:', fullpath)
-        with open(fullpath, 'a', newline='') as f:
-            writer = csv.writer(f)
-            writer.writerows(rows)
-        pass
 
     def implement_(self, strategy: Strategy):
         starting_balance = Balance(strategy_id=strategy.strategy_id, date=strategy.start_date,
@@ -129,11 +87,11 @@ class BackTest:
                                        number_of_shares=balance_num_of_shares)
                 balances.append(last_balance)
                 self.order_id_offset += len(orders)
-                self.trade_id_offest += len(trades)
+                self.trade_id_offset += len(trades)
 
-        self.write_to_csv('orders', orders)
-        self.write_to_csv('trades', trades)
-        self.write_to_csv('balances', balances)
+        self.dao.write_to_csv('orders', orders)
+        self.dao.write_to_csv('trades', trades)
+        self.dao.write_to_csv('balances', balances)
 
     def process_executed_buy_orders(self, orders: [Order], trades: [Trade], balances: [Balance], strategy: Strategy,
                                     trading_day: int, prices: [Price]) -> ([Order], [Trade], [Balance]):
@@ -164,7 +122,7 @@ class BackTest:
                     balances.append(balance)
                     past_order.active = False
 
-                    trade = Trade(trade_id=len(trades) + 1 + self.trade_id_offest,
+                    trade = Trade(trade_id=len(trades) + 1 + self.trade_id_offset,
                                   order_id=past_order.order_id,
                                   number_of_shares=past_order.number_of_shares,
                                   date=price.date,
@@ -205,7 +163,7 @@ class BackTest:
                 sale_total = self._total_(past_order.number_of_shares, price.open)
                 new_num_shares = past_order.number_of_shares + balance_num_of_shares
 
-                trade = Trade(trade_id=len(trades) + 1 + self.trade_id_offest,
+                trade = Trade(trade_id=len(trades) + 1 + self.trade_id_offset,
                               order_id=past_order.order_id,
                               number_of_shares=past_order.number_of_shares,
                               date=price.date,
@@ -245,7 +203,7 @@ class BackTest:
                     balances.append(balance)
                     past_order.active = False
 
-                    trade = Trade(trade_id=len(trades) + 1 + self.trade_id_offest,
+                    trade = Trade(trade_id=len(trades) + 1 + self.trade_id_offset,
                                   order_id=past_order.order_id,
                                   number_of_shares=past_order.number_of_shares,
                                   date=price.date,
@@ -357,5 +315,5 @@ class BackTest:
 
 
 if __name__ == '__main__':
-    trading_strategies = BackTest()
-    trading_strategies.implement_all_strategies()
+    back_test = BackTest()
+    back_test.implement_all_strategies()
