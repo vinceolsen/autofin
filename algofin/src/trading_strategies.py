@@ -35,22 +35,26 @@ class BackTest:
         self.now = str(int(time.time()))
         print('now:', self.now)
         self.symbols = self.get_all_symbols()
-        self.pricing_data = {
-            QQQ: self.load_csv(QQQ),
-            RITM: self.load_csv(RITM)
-        }
+        self.pricing_data = self.load_all_pricing_data()
         self.starting_balance = 10000.0
         self.strategies = self.get_strategies()
         self.write_to_csv('strategy', self.strategies)
         self.order_id_offset = 0
         self.trade_id_offest = 0
 
-    def get_all_symbols(self):
+    def get_all_symbols(self) -> set:
         symbols = set()
         for file in os.listdir('algofin/pricing_data'):
             if file.endswith(".csv"):
                 symbols.add(file[0:-4])
+        print('symbols:', symbols)
         return symbols
+
+    def load_all_pricing_data(self) -> dict:
+        pricing_data = dict()
+        for symbol in self.symbols:
+            pricing_data[symbol] = self.load_csv(symbol)
+        return pricing_data
 
     def implement_all_strategies(self):
         for strategy in self.strategies:
