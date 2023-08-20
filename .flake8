@@ -7,4 +7,4 @@ ignore = E501
 #     old,
 #     build,
 #     dist
-max-complexity = 10
+max-complexity = 3

@@ -30,10 +30,11 @@ Balance = namedtuple('Balance',
                      ['strategy_id', 'date', 'order_balance', 'cash_balance', 'invested_balance', 'number_of_shares'])
 
 
-class TradingStrategies:
+class BackTest:
     def __init__(self):
         self.now = str(int(time.time()))
         print('now:', self.now)
+        self.symbols = self.get_all_symbols()
         self.pricing_data = {
             QQQ: self.load_csv(QQQ),
             RITM: self.load_csv(RITM)
@@ -44,7 +45,14 @@ class TradingStrategies:
         self.order_id_offset = 0
         self.trade_id_offest = 0
 
-    def implement_strategies(self):
+    def get_all_symbols(self):
+        symbols = set()
+        for file in os.listdir('algofin/pricing_data'):
+            if file.endswith(".csv"):
+                symbols.add(file[0:-4])
+        return symbols
+
+    def implement_all_strategies(self):
         for strategy in self.strategies:
             self.implement_(strategy)
 
@@ -469,5 +477,5 @@ class TradingStrategies:
 
 
 if __name__ == '__main__':
-    trading_strategies = TradingStrategies()
-    trading_strategies.implement_strategies()
+    trading_strategies = BackTest()
+    trading_strategies.implement_all_strategies()
