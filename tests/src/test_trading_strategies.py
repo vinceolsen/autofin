@@ -1,4 +1,4 @@
-from algofin.src.trading_strategies import TradingStrategies
+from ...algofin.src.trading_strategies import TradingStrategies
 
 
 def test_true():
