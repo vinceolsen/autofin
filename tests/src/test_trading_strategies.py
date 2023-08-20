@@ -7,3 +7,8 @@ def test_true():
 def test_it_runs_everything():
     trading_strategies = BackTest()
     assert True
+
+def test_it_gets_all_symbols():
+    symbols = BackTest().symbols
+    assert symbols == {'QQQ', 'RITM'}
+
