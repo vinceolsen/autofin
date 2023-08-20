@@ -50,7 +50,7 @@ class TradingStrategies:
 
     @staticmethod
     def load_csv(name):
-        fullpath = 'algofin/data/' + name + '.csv'
+        fullpath = 'algofin/pricing_data/' + name + '.csv'
         print('reading csv:', fullpath)
 
         with open(fullpath, newline='') as f:
