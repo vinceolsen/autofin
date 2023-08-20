@@ -16,6 +16,7 @@ run:
 
 test:
 	echo "running tests"
+	poetry run pytest
 
 clean_install: clean install
 

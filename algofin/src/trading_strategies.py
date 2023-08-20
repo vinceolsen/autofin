@@ -44,8 +44,6 @@ class TradingStrategies:
         self.order_id_offset = 0
         self.trade_id_offest = 0
 
-        self.implement_strategies()
-
     def implement_strategies(self):
         for strategy in self.strategies:
             self.implement_(strategy)
@@ -472,3 +470,4 @@ class TradingStrategies:
 
 if __name__ == '__main__':
     trading_strategies = TradingStrategies()
+    trading_strategies.implement_strategies()
