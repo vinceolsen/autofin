@@ -1,0 +1,6 @@
+# back testing results
+algofin/results/
+
+# build and dev folders
+.pytest_cache
+.venv

@@ -55,7 +55,7 @@ class TradingStrategies:
 
         with open(fullpath, newline='') as f:
             reader = csv.reader(f)
-            headers = next(reader)  # discarded, used to skip the first row to cast to floats on the following rows
+            next(reader)  # discarded, used to skip the first row to cast to floats on the following rows
             data = [Price(row[0], row[1], float(row[2]), float(row[3]), float(row[4]), float(row[5])) for row in reader]
             print(data[:10])
         return data
