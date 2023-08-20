@@ -1,4 +1,8 @@
-clean:
+clean_results:
+	echo "cleaning up old results" && \
+	rm -rf algofin/results/*
+
+clean: clean_results
 	echo "cleaning project" && \
 	rm -rf .pytest_cache && \
 	rm -rf .venv && \
