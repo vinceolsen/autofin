@@ -36,6 +36,18 @@ class BackTest:
                 balance = v[1]
         return strategy_id, ending_balance, balance
 
+    def get_max_strategy_balance_at_anytime(self):
+        ending_balances, max_balance_of_each_strategy = self.get_strategy_ending_and_max_balances()
+        strategy_id = 0
+        anytime_balance = 0
+        balance = None
+        for k, v in max_balance_of_each_strategy.items():
+            if v[0] > anytime_balance:
+                strategy_id = k
+                anytime_balance = v[0]
+                balance = v[1]
+        return strategy_id, anytime_balance, balance
+
     def get_strategy_ending_and_max_balances(self):
         ending_balances = dict()
         max_balance_of_each_strategy = defaultdict(tuple)
