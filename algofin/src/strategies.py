@@ -1,4 +1,4 @@
-from collections import namedtuple
+from .objects import Strategy
 from decimal import Decimal
 
 # specify constants
@@ -10,11 +10,6 @@ QQQ_start = '1999-05-01'
 QQQ_end = '2023-05-01'
 RITM_start = '1999-05-01'
 RITM_end = '2023-05-01'
-
-
-Strategy = namedtuple('Strategy',
-                      ['strategy_id', 'strategy_name', 'description', 'buy_offset', 'sell_offset', 'trade_type',
-                       'order_duration', 'order_amount_ratio', 'symbol', 'start_date', 'end_date'])
 
 
 class Strategies:

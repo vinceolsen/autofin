@@ -17,7 +17,7 @@ class BackTest:
         self.pricing_data = self.dao.load_all_pricing_data()
         self.starting_balance = Decimal(10000)
         self.strategies = Strategies.get_strategies()
-        self.dao.write_to_csv('strategy', self.strategies)
+        self.dao.write_to_csv('strategies', self.strategies)
         self.order_id_offset = 0
         self.trade_id_offset = 0
 
