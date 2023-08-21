@@ -42,3 +42,6 @@ From the terminal, run: `make run`
 
 ### Test
 From the terminal, run: `make test`
+
+### Lint
+From the terminal, run: `make lint`
