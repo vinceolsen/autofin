@@ -138,7 +138,7 @@ class BackTest:
         -------
         None
         """
-        self.dao.write_to_csv('strategies', [strategy])
+        self.dao._write_to_csv('strategies', [strategy])
         starting_balance = Balance(strategy_id=strategy.strategy_id, date=strategy.start_date,
                                    cash_balance=self.starting_balance,
                                    order_balance=Decimal(0), invested_balance=Decimal(0), number_of_shares=0)
@@ -184,9 +184,9 @@ class BackTest:
                 self.order_id_offset += len(orders)
                 self.trade_id_offset += len(trades)
 
-        self.dao.write_to_csv('orders', orders)
-        self.dao.write_to_csv('trades', trades)
-        self.dao.write_to_csv('balances', balances)
+        self.dao._write_to_csv('orders', orders)
+        self.dao._write_to_csv('trades', trades)
+        self.dao._write_to_csv('balances', balances)
 
     def _process_executed_buy_orders(self, orders: [Order], trades: [Trade], balances: [Balance], strategy: Strategy,
                                      trading_day: int, prices: [Price]) -> ([Order], [Trade], [Balance]):

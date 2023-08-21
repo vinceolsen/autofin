@@ -9,7 +9,7 @@ def test_it_gets_all_symbols():
 
 
 def test_it_loads_a_pricing_file():
-    prices = Dao().get_prices('RITM')
+    prices = Dao()._get_prices('RITM')
     assert len(prices) == 2544
     assert len(prices[0]) == 6
     assert prices[0] == Price(symbol='RITM', date='2013-05-02', open=Decimal('14.0'), high=Decimal('14.0'), low=Decimal('13.0'), close=Decimal('13.52'))
@@ -48,7 +48,7 @@ def test_it_loads_strategies():
                                     start_date='QQQ_start',
                                     end_date='QQQ_end')
     strategies.append(qqq3down6up10day)
-    dao.write_to_csv('strategies', strategies)
+    dao._write_to_csv('strategies', strategies)
     read_strategies = dao.get_strategies()
     assert len(read_strategies) == 2
     assert strategies == read_strategies
