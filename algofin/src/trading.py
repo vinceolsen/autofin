@@ -17,7 +17,6 @@ class BackTest:
         self.pricing_data = self.dao.load_all_pricing_data()
         self.starting_balance = Decimal(10000)
         self.strategies = Strategies.get_strategies()
-        self.dao.write_to_csv('strategies', self.strategies)
         self.order_id_offset = 0
         self.trade_id_offset = 0
 
@@ -71,6 +70,7 @@ class BackTest:
         return strategy_is_live, trading_day
 
     def implement_(self, strategy: Strategy):
+        self.dao.write_to_csv('strategies', [strategy])
         starting_balance = Balance(strategy_id=strategy.strategy_id, date=strategy.start_date,
                                    cash_balance=self.starting_balance,
                                    order_balance=Decimal(0), invested_balance=Decimal(0), number_of_shares=0)

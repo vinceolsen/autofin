@@ -22,8 +22,8 @@ class Strategies:
 
         buy_and_hold_name = 'buy and hold'
         buy_and_hold_description = 'buy on start date and hold until end date'
-        buy_low_sell_high_name = 'limit buy offset down, limit sell offset up'
-        buy_low_sell_high_description = 'Set a limit buy at current price * buy offset, when that purchase is made, set a limit sell at purchase price * sell offset. The purchase order expires after the specified duration of trading days if not fulfilled.'
+        buy_low_sell_high_name = 'limit buy offset down; limit sell offset up'
+        buy_low_sell_high_description = 'Set a limit buy at current price * buy offset; when that purchase is made; set a limit sell at purchase price * sell offset. The purchase order expires after the specified duration of trading days if not fulfilled.'
         strategy_id = 0
 
         qqq5down10up10day = Strategy(strategy_id=(strategy_id := strategy_id + 1),

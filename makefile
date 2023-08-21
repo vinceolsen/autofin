@@ -18,7 +18,7 @@ install:
 	poetry install
 
 run:
-	poetry run python algofin/src/trading_strategies.py
+	poetry run python algofin/src/optimize.py
 
 test:
 	echo "running tests"
