@@ -40,7 +40,7 @@ class Dao:
 
     @staticmethod
     def load_balance(row):
-        return Balance(row[0], row[1], float(row[2]), float(row[3]), float(row[4]), row[5])
+        return Balance(int(row[0]), row[1], float(row[2]), float(row[3]), float(row[4]), int(row[5]))
 
     @staticmethod
     def load_price(row):

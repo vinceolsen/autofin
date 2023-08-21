@@ -29,7 +29,7 @@ class BackTest:
         strategy_id = 0
         ending_balance = 0
         balance = None
-        for k, v in ending_balances:
+        for k, v in ending_balances.items():
             if v[0] > ending_balance:
                 strategy_id = k
                 ending_balance = v[0]
@@ -38,13 +38,13 @@ class BackTest:
 
     def get_strategy_ending_and_max_balances(self):
         ending_balances = dict()
-        max_balance_of_each_strategy = defaultdict(tuple(int, Balance))
+        max_balance_of_each_strategy = defaultdict(tuple)
         balances = self.dao.get_balances()
         for balance in balances:
             total_balance = balance[2] + balance[3] + balance[4]
             ending_balances[balance[0]] = (total_balance, balance)
-            if total_balance > max_balance_of_each_strategy[balance[0]][0]:
-             max_balance_of_each_strategy[balance[0]] = (total_balance, balance)
+            if total_balance > max_balance_of_each_strategy.get(balance[0], (0,None))[0]:
+                max_balance_of_each_strategy[balance[0]] = (total_balance, balance)
         return ending_balances, max_balance_of_each_strategy
 
 
