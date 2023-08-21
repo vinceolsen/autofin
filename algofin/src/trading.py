@@ -157,7 +157,8 @@ class BackTest:
             orders, trades, balances = self._process_executed_sell_orders(orders, trades, balances, strategy, price)
 
             # check for buys that were executed
-            orders, trades, balances = self._process_executed_buy_orders(orders, trades, balances, strategy, trading_day,
+            orders, trades, balances = self._process_executed_buy_orders(orders, trades, balances, strategy,
+                                                                         trading_day,
                                                                          prices)
 
             # check for sells that expired
@@ -312,7 +313,8 @@ class BackTest:
     def _total_(num_shares: int, current_price: float):
         return num_shares * current_price
 
-    def _add_new_buy_order(self, orders: [Order], balances: [Balance], strategy: Strategy, trading_day: int, prices) -> (
+    def _add_new_buy_order(self, orders: [Order], balances: [Balance], strategy: Strategy, trading_day: int,
+                           prices) -> (
             [Order], [Balance]):
 
         price = prices[trading_day]

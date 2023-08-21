@@ -83,7 +83,8 @@ class Dao:
         with open(path, newline='') as f:
             reader = csv.reader(f)
             if skip_headers:
-                next(reader)  # discarded, used to skip the first row of headers to cast to specific types on the following rows
+                next(
+                    reader)  # discarded, used to skip the first row of headers to cast to specific types on the following rows
             data = [load_object(row) for row in reader]
             print(data[:10])
         return data

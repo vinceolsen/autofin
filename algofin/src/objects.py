@@ -1,7 +1,6 @@
 from collections import namedtuple
 from recordtype import recordtype
 
-
 # specify objects
 
 Strategy = namedtuple('Strategy',
@@ -30,7 +29,6 @@ Strategy
     A strategy record
 """
 
-
 Price = namedtuple('Price', ['symbol', 'date', 'open', 'high', 'low', 'close'])
 """
 The historic pricing data is daily pricing information.  A historic price has specific features:
@@ -42,14 +40,13 @@ Parameters
 - open: the opening price
 - high: the highest price on that day
 - low: the lowest price on that day
-- close: the price at the close of the day 
+- close: the price at the close of the day
 
 Returns
 -------
 Price
     A price record
 """
-
 
 Order = recordtype('Order',
                    ['order_id', 'strategy_id', 'symbol', 'number_of_shares', 'buy_sell', 'trade_type',
@@ -77,7 +74,6 @@ Order
     An order record
 """
 
-
 Trade = namedtuple('Trade', ['trade_id', 'order_id', 'number_of_shares', 'date', 'price', 'total'])
 """
 Trade record
@@ -97,7 +93,6 @@ Trade
     A trade record
 """
 
-
 Balance = namedtuple('Balance',
                      ['strategy_id', 'date', 'order_balance', 'cash_balance', 'invested_balance', 'number_of_shares'])
 """
@@ -107,7 +102,7 @@ Parameters
 ----------
 - strategy_id: which strategy is this balance record for
 - date: the date of the balance record in string iso format: '2023-04-10'
-- order_balance: Decimal amount of the current balance that is devoted to outstanding orders.  
+- order_balance: Decimal amount of the current balance that is devoted to outstanding orders.
     The cash balance is reduced by the order amount to avoid a negative balance scenario.
 - cash_balance: Decimal amount of cash
 - invested_balance: Decimal amount of notional value of invested shares at the price at the time of this balance update
