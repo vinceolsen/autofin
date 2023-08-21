@@ -17,7 +17,7 @@ An algorithm has specific features that can be configured.
 - end_date: the end date for the back testing
 
 ### Historical pricing data properties
-Teh historic pricing data is daily pricing information.  A historic price has specific features:
+The historic pricing data is daily pricing information.  A historic price has specific features:
 - symbol: one of [QQQ, RITM]
 - date: the date of the daily price information
 - open: the opening price
