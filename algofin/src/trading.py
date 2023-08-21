@@ -1,7 +1,7 @@
 from datetime import date
-from .strategies import Strategy, Strategies, LIMIT, MARKET
-from .dao import Dao
-from .objects import Balance, Order, Price, Trade
+from strategies import Strategy, Strategies, LIMIT, MARKET
+from dao import Dao
+from objects import Balance, Order, Price, Trade
 from collections import defaultdict
 from decimal import Decimal
 

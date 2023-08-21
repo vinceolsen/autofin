@@ -1,7 +1,7 @@
 import os
 import csv
 import time
-from .objects import Price, Balance, Strategy
+from objects import Price, Balance, Strategy
 from decimal import Decimal
 
 
@@ -78,4 +78,6 @@ class Dao:
 
     def get_strategy(self, id: int) -> Strategy:
         strategies = self.get_strategies()
-        return strategies[id - 1]
+        for strategy in strategies:
+            if strategy[0] == id:
+                return strategy

@@ -1,4 +1,4 @@
-from .objects import Strategy
+from objects import Strategy
 from decimal import Decimal
 
 # specify constants
