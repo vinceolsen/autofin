@@ -31,6 +31,9 @@ Dependencies are managed using Poetry
 ### Python version
 3.11
 
+### Clean
+From the terminal, run: `make clean`
+
 ### Install
 From the terminal, run: `make install`
 

@@ -29,4 +29,3 @@ lint:
 	poetry run flake8 algofin/src tests
 
 clean_install: clean install
-
