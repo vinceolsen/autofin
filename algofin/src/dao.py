@@ -74,8 +74,8 @@ class Dao:
 
     def get_strategies(self) -> [Strategy]:
         path = 'algofin/results/' + self.now + '/strategies.csv'
-        return self.read_csv(path, self.load_stategy, False)
+        return self.read_csv(path, self.load_strategy, False)
 
     def get_strategy(self, id: int) -> Strategy:
         strategies = self.get_strategies()
-        return strategies[id]
+        return strategies[id - 1]

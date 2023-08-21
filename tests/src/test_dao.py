@@ -1,5 +1,6 @@
 from ...algofin.src.dao import Dao, Price
 from decimal import Decimal
+from ...algofin.src.objects import Strategy
 
 
 def test_it_gets_all_symbols():
@@ -18,3 +19,40 @@ def test_it_loads_a_pricing_file():
 def test_it_loads_all_pricing_data():
     pricing_data = Dao().load_all_pricing_data()
     assert len(pricing_data) == 2
+
+def test_it_loads_strategies():
+    dao = Dao()
+    strategies = []
+    qqq5down10up10day = Strategy(strategy_id=1,
+                                     strategy_name="buy_low_sell_high_name",
+                                     description="buy_low_sell_high_description",
+                                     buy_offset=Decimal('0.95'),
+                                     sell_offset=Decimal('1.10'),
+                                     trade_type="LIMIT",
+                                     order_duration=10,
+                                     order_amount_ratio=Decimal('0.1'),
+                                     symbol="QQQ",
+                                     start_date='QQQ_start',
+                                     end_date='QQQ_end')
+    strategies.append(qqq5down10up10day)
+
+    qqq3down6up10day = Strategy(strategy_id=2,
+                                    strategy_name='buy_low_sell_high_name',
+                                    description='buy_low_sell_high_description',
+                                    buy_offset=Decimal('0.97'),
+                                    sell_offset=Decimal('1.06'),
+                                    trade_type='LIMIT',
+                                    order_duration=10,
+                                    order_amount_ratio=Decimal('0.1'),
+                                    symbol='QQQ',
+                                    start_date='QQQ_start',
+                                    end_date='QQQ_end')
+    strategies.append(qqq3down6up10day)
+    dao.write_to_csv('strategies', strategies)
+    read_strategies = dao.get_strategies()
+    assert len(read_strategies) == 2
+    assert strategies == read_strategies
+
+    specific_strategy = dao.get_strategy(2)
+    assert specific_strategy == qqq3down6up10day
+
