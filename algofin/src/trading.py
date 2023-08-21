@@ -11,21 +11,61 @@ SELL = 'sell'
 
 
 class BackTest:
-    def __init__(self):
+    def __init__(self, starting_balance: int = 10000):
+        """
+        Initializes the BackTest class so that strategies can be back tested against historical daily
+        pricing information.
+
+        Parameters
+        ----------
+        starting_balance : int
+            The starting balance for back testing
+
+        Returns
+        -------
+        BackTest
+        """
         self.dao = Dao()
         self.symbols = self.dao.get_all_symbols()
         self.pricing_data = self.dao.load_all_pricing_data()
-        self.starting_balance = Decimal(10000)
+        self.starting_balance = Decimal(starting_balance)
         self.strategies = Strategies.get_strategies()
         self.order_id_offset = 0
         self.trade_id_offset = 0
 
     def implement_all_strategies(self):
+        """
+        Iterates over hard coded sample strategies and back tests them against historical daily
+        pricing information.  Stores the results information in the ../results folder partitioned by class init time.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
         for strategy in self.strategies:
             self.implement_(strategy)
 
-    def get_max_strategy_ending_balance(self):
-        ending_balances, max_balance_of_each_strategy = self.get_strategy_ending_and_max_balances()
+    def get_max_strategy_ending_balance(self) -> (int, Decimal, Balance):
+        """
+        Iterates over all of the results information in the ../results folder from this class init time and finds
+        the strategy that produced the largest ending balance.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        (int, Decimal, Balance)
+            The strategy ID that produced the largest ending balance
+            The largest ending balance amount
+            The largest ending Balance record
+        """
+        ending_balances, max_balance_of_each_strategy = self._get_strategy_ending_and_max_balances()
         strategy_id = 0
         ending_balance = 0
         balance = None
@@ -37,7 +77,22 @@ class BackTest:
         return strategy_id, ending_balance, balance
 
     def get_max_strategy_balance_at_anytime(self):
-        ending_balances, max_balance_of_each_strategy = self.get_strategy_ending_and_max_balances()
+        """
+        Iterates over all of the results information in the ../results folder from this class init time and finds
+        the strategy that produced the largest balance at any time during the back testing period.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        (int, Decimal, Balance)
+            The strategy ID that produced the largest anytime balance
+            The largest anytime balance amount
+            The largest anytime Balance record
+        """
+        ending_balances, max_balance_of_each_strategy = self._get_strategy_ending_and_max_balances()
         strategy_id = 0
         anytime_balance = Decimal(0)
         balance = None
@@ -48,7 +103,7 @@ class BackTest:
                 balance = v[1]
         return strategy_id, anytime_balance, balance
 
-    def get_strategy_ending_and_max_balances(self):
+    def _get_strategy_ending_and_max_balances(self):
         ending_balances = dict()
         max_balance_of_each_strategy = defaultdict(tuple)
         balances = self.dao.get_balances()
@@ -59,7 +114,7 @@ class BackTest:
                 max_balance_of_each_strategy[balance[0]] = (total_balance, balance)
         return ending_balances, max_balance_of_each_strategy
 
-    def get_starting_trading_day(self, prices, start_date):
+    def _get_starting_trading_day(self, prices, start_date):
         strategy_is_live = False
         trading_day = 0
         for day in prices:
@@ -70,6 +125,19 @@ class BackTest:
         return strategy_is_live, trading_day
 
     def implement_(self, strategy: Strategy):
+        """
+        Implements a strategy against historic daily pricing info during the time period specified for the strategy.
+        Saves the results in the ../results folder from this class init time.
+
+        Parameters
+        ----------
+        strategy
+            The strategy that is being implemented
+
+        Returns
+        -------
+        None
+        """
         self.dao.write_to_csv('strategies', [strategy])
         starting_balance = Balance(strategy_id=strategy.strategy_id, date=strategy.start_date,
                                    cash_balance=self.starting_balance,
@@ -80,31 +148,31 @@ class BackTest:
 
         prices = self.pricing_data[strategy.symbol]
 
-        strategy_is_live, trading_day = self.get_starting_trading_day(prices, strategy.start_date)
+        strategy_is_live, trading_day = self._get_starting_trading_day(prices, strategy.start_date)
 
         while strategy_is_live:
             price = prices[trading_day]
 
             # check for sells that were executed
-            orders, trades, balances = self.process_executed_sell_orders(orders, trades, balances, strategy, price)
+            orders, trades, balances = self._process_executed_sell_orders(orders, trades, balances, strategy, price)
 
             # check for buys that were executed
-            orders, trades, balances = self.process_executed_buy_orders(orders, trades, balances, strategy, trading_day,
-                                                                        prices)
+            orders, trades, balances = self._process_executed_buy_orders(orders, trades, balances, strategy, trading_day,
+                                                                         prices)
 
             # check for sells that expired
-            orders = self.change_expired_sell_orders_to_maket_orders(orders, price)
+            orders = self._change_expired_sell_orders_to_maket_orders(orders, price)
 
             # check for buys that expired
-            orders, balances = self.close_expired_buy_orders(orders, balances, strategy, price)
+            orders, balances = self._close_expired_buy_orders(orders, balances, strategy, price)
 
             # enter new buy order
-            orders, balances = self.add_new_buy_order(orders, balances, strategy, trading_day, prices)
+            orders, balances = self._add_new_buy_order(orders, balances, strategy, trading_day, prices)
 
             trading_day += 1
             if self._greater_than_or_equal(price.date, strategy.end_date):
                 strategy_is_live = False
-                order_balance, cash_balance, invested_balance, balance_num_of_shares = self.get_current_balances(
+                order_balance, cash_balance, invested_balance, balance_num_of_shares = self._get_current_balances(
                     balances, price)
                 last_balance = Balance(strategy_id=strategy.strategy_id,
                                        date=price.date,
@@ -120,12 +188,12 @@ class BackTest:
         self.dao.write_to_csv('trades', trades)
         self.dao.write_to_csv('balances', balances)
 
-    def process_executed_buy_orders(self, orders: [Order], trades: [Trade], balances: [Balance], strategy: Strategy,
-                                    trading_day: int, prices: [Price]) -> ([Order], [Trade], [Balance]):
+    def _process_executed_buy_orders(self, orders: [Order], trades: [Trade], balances: [Balance], strategy: Strategy,
+                                     trading_day: int, prices: [Price]) -> ([Order], [Trade], [Balance]):
 
         price = prices[trading_day]
-        order_balance, cash_balance, invested_balance, balance_num_of_shares = self.get_current_balances(balances,
-                                                                                                         price)
+        order_balance, cash_balance, invested_balance, balance_num_of_shares = self._get_current_balances(balances,
+                                                                                                          price)
         for past_order in orders:
             # check active buys
             if past_order.active and past_order.buy_sell == BUY and self._greater_than_or_equal(past_order.close_date,
@@ -175,11 +243,11 @@ class BackTest:
 
         return orders, trades, balances
 
-    def process_executed_sell_orders(self, orders: [Order], trades: [Trade], balances: [Balance], strategy: Strategy,
-                                     price: Price) -> ([Order], [Trade], [Balance]):
+    def _process_executed_sell_orders(self, orders: [Order], trades: [Trade], balances: [Balance], strategy: Strategy,
+                                      price: Price) -> ([Order], [Trade], [Balance]):
 
-        order_balance, cash_balance, invested_balance, balance_num_of_shares = self.get_current_balances(balances,
-                                                                                                         price)
+        order_balance, cash_balance, invested_balance, balance_num_of_shares = self._get_current_balances(balances,
+                                                                                                          price)
         # we should not have to check all past orders, can we check just the last one? What happens
         # during the first and last order duration?
         for past_order in orders:
@@ -244,13 +312,13 @@ class BackTest:
     def _total_(num_shares: int, current_price: float):
         return num_shares * current_price
 
-    def add_new_buy_order(self, orders: [Order], balances: [Balance], strategy: Strategy, trading_day: int, prices) -> (
+    def _add_new_buy_order(self, orders: [Order], balances: [Balance], strategy: Strategy, trading_day: int, prices) -> (
             [Order], [Balance]):
 
         price = prices[trading_day]
 
-        order_balance, cash_balance, invested_balance, balance_num_of_shares = self.get_current_balances(balances,
-                                                                                                         price)
+        order_balance, cash_balance, invested_balance, balance_num_of_shares = self._get_current_balances(balances,
+                                                                                                          price)
 
         default_order_amount = self.starting_balance * strategy.order_amount_ratio
 
@@ -284,7 +352,7 @@ class BackTest:
 
         return orders, balances
 
-    def change_expired_sell_orders_to_maket_orders(self, orders: [Order], price: Price) -> (
+    def _change_expired_sell_orders_to_maket_orders(self, orders: [Order], price: Price) -> (
             [Order], [Trade], [Balance]):
 
         for past_order in orders:
@@ -296,11 +364,11 @@ class BackTest:
 
         return orders
 
-    def close_expired_buy_orders(self, orders: [Order], balances: [Balance], strategy: Strategy, price: Price) -> (
+    def _close_expired_buy_orders(self, orders: [Order], balances: [Balance], strategy: Strategy, price: Price) -> (
             [Order], [Balance]):
 
-        order_balance, cash_balance, invested_balance, balance_num_of_shares = self.get_current_balances(balances,
-                                                                                                         price)
+        order_balance, cash_balance, invested_balance, balance_num_of_shares = self._get_current_balances(balances,
+                                                                                                          price)
 
         # we should not have to check all past orders, can we check just the last one? What happens
         # during the first and last order duration? such as for past_order in orders[-(strategy.order_duration + 1):]:
@@ -321,7 +389,7 @@ class BackTest:
 
         return orders, balances
 
-    def get_current_balances(self, balances: [Balance], price: Price):
+    def _get_current_balances(self, balances: [Balance], price: Price):
         order_balance = balances[-1].order_balance
         cash_balance = balances[-1].cash_balance
         balance_num_of_shares = balances[-1].number_of_shares
