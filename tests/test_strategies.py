@@ -1,4 +1,4 @@
-from ..src.strategies import Strategies
+from ..algofin.src.strategies import Strategies
 
 
 def test_get_all_strategies_gets_correct_number():

@@ -1,6 +1,6 @@
-from ..src.dao import Dao, Price
+from ..algofin.src.dao import Dao, Price
 from decimal import Decimal
-from ..src.objects import Strategy
+from ..algofin.src.objects import Strategy
 
 
 def test_it_gets_all_symbols():

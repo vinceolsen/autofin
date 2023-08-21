@@ -1,6 +1,6 @@
 from decimal import Decimal
-from ..src.trading import BackTest
-from ..src.objects import Balance
+from ..algofin.src.trading import BackTest
+from ..algofin.src.objects import Balance
 
 
 def test_it_finds_the_strategy_with_max_ending_balance():
