@@ -17,7 +17,20 @@ class Strategies:
         pass
 
     @staticmethod
-    def get_strategies():
+    def get_strategies() -> [Strategy]:
+        """
+        Creates a list of hardcoded strategies that can be iterated over for back testing.
+        Additional strategies can be added to this list.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        [Strategy]
+            A list of hard codede strategies
+        """
         strategies = []
 
         buy_and_hold_name = 'buy and hold'

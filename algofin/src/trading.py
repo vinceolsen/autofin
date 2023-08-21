@@ -33,7 +33,7 @@ class BackTest:
         self.order_id_offset = 0
         self.trade_id_offset = 0
 
-    def implement_all_strategies(self):
+    def implement_all_hard_coded_strategies(self):
         """
         Iterates over hard coded sample strategies and back tests them against historical daily
         pricing information.  Stores the results information in the ../results folder partitioned by class init time.
@@ -411,4 +411,7 @@ class BackTest:
 
 if __name__ == '__main__':
     back_test = BackTest()
-    back_test.implement_all_strategies()
+    back_test.implement_all_hard_coded_strategies()
+    strategy_id, ending_balance, balance = back_test.get_max_strategy_ending_balance()
+    best_hard_coded_strategy = back_test.dao.get_strategy(strategy_id)
+    print(strategy_id, ending_balance, balance, best_hard_coded_strategy)

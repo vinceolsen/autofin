@@ -4,10 +4,28 @@ from strategies import LIMIT
 from trading import BackTest
 
 
-def find_optimal_strategy(start, end)-> Strategy:
+def find_optimal_strategy(start, end) -> Strategy:
+    """
+    For a specified date range, iterates over lists of potential values for a strategy and back tests them to find the
+    optimal combination of configuration values.  saves teh results in the results folder and prints out the best
+    strategy
+
+    Parameters
+    ----------
+    start
+        Start date in string format: ''2005-01-01'
+
+    end
+        End date in string format: '2016-01-01'
+
+    Returns
+    -------
+    Strategy
+        The optimally configured strategy from the values iterated over
+    """
     symbols = [
         'QQQ',
-        # 'RITM'
+        'RITM'
     ]
 
     buy_offsets = [
@@ -52,16 +70,16 @@ def find_optimal_strategy(start, end)-> Strategy:
             for buy_offset in buy_offsets:
                 for sell_offset in sell_offsets:
                     strategy = Strategy(strategy_id=(strategy_id := strategy_id + 1),
-                             strategy_name='limit buy offset down; limit sell offset up',
-                             description='Set a limit buy at current price * buy offset; when that purchase is made; set a limit sell at purchase price * sell offset. The purchase order expires after the specified duration of trading days if not fulfilled.',
-                             buy_offset=buy_offset,
-                             sell_offset=sell_offset,
-                             trade_type=LIMIT,
-                             order_duration=10,
-                             order_amount_ratio=order_amount_ratio,
-                             symbol=symbol,
-                             start_date=start,
-                             end_date=end)
+                                        strategy_name='limit buy offset down; limit sell offset up',
+                                        description='Set a limit buy at current price * buy offset; when that purchase is made; set a limit sell at purchase price * sell offset. The purchase order expires after the specified duration of trading days if not fulfilled.',
+                                        buy_offset=buy_offset,
+                                        sell_offset=sell_offset,
+                                        trade_type=LIMIT,
+                                        order_duration=10,
+                                        order_amount_ratio=order_amount_ratio,
+                                        symbol=symbol,
+                                        start_date=start,
+                                        end_date=end)
 
                     back_test.implement_(strategy)
 
@@ -79,5 +97,5 @@ def find_optimal_strategy(start, end)-> Strategy:
 
 
 if __name__ == '__main__':
-    best_strategy = find_optimal_strategy('2005-01-01','2016-01-01')
+    best_strategy = find_optimal_strategy('2005-01-01', '2016-01-01')
     print('\n\nBest strategy:', best_strategy)
