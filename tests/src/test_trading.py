@@ -5,6 +5,6 @@ def test_true():
     assert True
 
 
-def test_it_runs_everything():
+def test_it_finds_the_strategy_with_max_ending_balance():
     BackTest()
     assert True

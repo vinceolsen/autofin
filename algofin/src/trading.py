@@ -2,6 +2,7 @@ from datetime import date
 from .strategies import Strategy, Strategies, LIMIT, MARKET
 from .dao import Dao
 from .objects import Balance, Order, Price, Trade
+from collections import defaultdict
 
 
 # specify constants
@@ -23,11 +24,29 @@ class BackTest:
         for strategy in self.strategies:
             self.implement_(strategy)
 
-    def get_best_strategy(self):
-        ending_balances = []
-        max_balance_of_each_strategy = []
+    def get_max_strategy_ending_balance(self):
+        ending_balances, max_balance_of_each_strategy = self.get_strategy_ending_and_max_balances()
+        strategy_id = 0
+        ending_balance = 0
+        balance = None
+        for k, v in ending_balances:
+            if v[0] > ending_balance:
+                strategy_id = k
+                ending_balance = v[0]
+                balance = v[1]
+        return strategy_id, ending_balance, balance
+
+    def get_strategy_ending_and_max_balances(self):
+        ending_balances = dict()
+        max_balance_of_each_strategy = defaultdict(tuple(int, Balance))
         balances = self.dao.get_balances()
-        # max_ending_balance = ending_balances.sort()
+        for balance in balances:
+            total_balance = balance[2] + balance[3] + balance[4]
+            ending_balances[balance[0]] = (total_balance, balance)
+            if total_balance > max_balance_of_each_strategy[balance[0]][0]:
+             max_balance_of_each_strategy[balance[0]] = (total_balance, balance)
+        return ending_balances, max_balance_of_each_strategy
+
 
 
     def get_starting_trading_day(self, prices, start_date):
