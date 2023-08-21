@@ -2,6 +2,7 @@ import os
 import csv
 import time
 from .objects import Price, Balance
+from decimal import Decimal
 
 
 class Dao:
@@ -40,11 +41,12 @@ class Dao:
 
     @staticmethod
     def load_balance(row):
-        return Balance(int(row[0]), row[1], float(row[2]), float(row[3]), float(row[4]), int(row[5]))
+        print('row', row)
+        return Balance(int(row[0]), row[1], Decimal(row[2]), Decimal(row[3]), Decimal(row[4]), int(row[5]))
 
     @staticmethod
     def load_price(row):
-        return Price(row[0], row[1], float(row[2]), float(row[3]), float(row[4]), float(row[5]))
+        return Price(row[0], row[1], Decimal(row[2]), Decimal(row[3]), Decimal(row[4]), Decimal(row[5]))
 
     @staticmethod
     def read_csv(path, load_object, skip_headers=False):

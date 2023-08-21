@@ -52,6 +52,16 @@ files = [
 ]
 
 [[package]]
+name = "money"
+version = "1.3.0"
+description = "Python Money Class"
+optional = false
+python-versions = "*"
+files = [
+    {file = "money-1.3.0.tar.gz", hash = "sha256:ac049caf19df9502f7a481d5959fc51b038baaa68c5dcef2070ffbb785729f7d"},
+]
+
+[[package]]
 name = "packaging"
 version = "23.1"
 description = "Core utilities for Python packages"
@@ -212,4 +222,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "ca2ab268dcf6857a6871859b92b758c3c6b641d9dbb49cbf24e88ec3f522f75f"
+content-hash = "e711e2d71a7fa05982217f59bea2f5f5879cfcdfe1f7b90671e2f640c30d2f05"

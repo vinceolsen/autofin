@@ -3,18 +3,19 @@ from .strategies import Strategy, Strategies, LIMIT, MARKET
 from .dao import Dao
 from .objects import Balance, Order, Price, Trade
 from collections import defaultdict
-
+from decimal import Decimal
 
 # specify constants
 BUY = 'buy'
 SELL = 'sell'
+
 
 class BackTest:
     def __init__(self):
         self.dao = Dao()
         self.symbols = self.dao.get_all_symbols()
         self.pricing_data = self.dao.load_all_pricing_data()
-        self.starting_balance = 10000.0
+        self.starting_balance = Decimal(10000)
         self.strategies = Strategies.get_strategies()
         self.dao.write_to_csv('strategy', self.strategies)
         self.order_id_offset = 0
@@ -39,7 +40,7 @@ class BackTest:
     def get_max_strategy_balance_at_anytime(self):
         ending_balances, max_balance_of_each_strategy = self.get_strategy_ending_and_max_balances()
         strategy_id = 0
-        anytime_balance = 0
+        anytime_balance = Decimal(0)
         balance = None
         for k, v in max_balance_of_each_strategy.items():
             if v[0] > anytime_balance:
@@ -55,11 +56,9 @@ class BackTest:
         for balance in balances:
             total_balance = balance[2] + balance[3] + balance[4]
             ending_balances[balance[0]] = (total_balance, balance)
-            if total_balance > max_balance_of_each_strategy.get(balance[0], (0,None))[0]:
+            if total_balance > max_balance_of_each_strategy.get(balance[0], (Decimal(0), None))[0]:
                 max_balance_of_each_strategy[balance[0]] = (total_balance, balance)
         return ending_balances, max_balance_of_each_strategy
-
-
 
     def get_starting_trading_day(self, prices, start_date):
         strategy_is_live = False
@@ -74,7 +73,7 @@ class BackTest:
     def implement_(self, strategy: Strategy):
         starting_balance = Balance(strategy_id=strategy.strategy_id, date=strategy.start_date,
                                    cash_balance=self.starting_balance,
-                                   order_balance=0.0, invested_balance=0.0, number_of_shares=0)
+                                   order_balance=Decimal(0), invested_balance=Decimal(0), number_of_shares=0)
         orders = []
         trades = []
         balances = [starting_balance]
@@ -255,7 +254,7 @@ class BackTest:
 
         default_order_amount = self.starting_balance * strategy.order_amount_ratio
 
-        if cash_balance > 0:
+        if cash_balance > Decimal(0):
             # create_order
             order_amount = default_order_amount if default_order_amount < cash_balance else cash_balance
             buy_offset_price = price.close * strategy.buy_offset
