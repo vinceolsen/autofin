@@ -1,6 +1,8 @@
 # back testing results
-algofin/results/
+# algofin/results/
 
 # build and dev folders
 .pytest_cache
 .venv
+
+.DS_Store
